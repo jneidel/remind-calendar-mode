@@ -3,7 +3,12 @@
 A major mode that syntactically highlight ~.rem~ files for the [[https://dianne.skoll.ca/projects/remind/][remind calendar
 system by Dianne Skoll]].
 
-[[file:docs/screenshot.png]]
+** Features
+Syntax highlighting:
+[[file:docs/syntax.png]]
+
+Render the calendar (as a non-interactive colored pure-text buffer):
+[[file:docs/ansi-calendar.png]]
 
 ** Usage
 To syntax highlight your ~.rem~ files:
@@ -12,6 +17,8 @@ To syntax highlight your ~.rem~ files:
   :mode ("\\.rem\\'" . remind-calendar-mode)
   :quelpa (remind-calendar-mode :fetcher github :repo "jneidel/remind-calendar-mode"))
 #+end_src
+
+To view the calendar: =M-x remind-calendar=.
 
 ** References
 - Alternative mode for remind files: [[https://github.com/sshelagh/remind-conf-mode][sshelagh/remind-conf-mode]]

@@ -115,6 +115,35 @@
        (0 'font-lock-comment-face t t))
       )))
 
+
+;;;###autoload
+(defun remind-calendar()
+  "Display terminal version of the remind calendar in color.
+Includes the last four week and the next three months.
+Centered on today.
+
+Can be inconsistent. You might need to call it multiple times."
+  (interactive)
+  (let ((buf (get-buffer-create "*remind-calendar*")))
+    (with-current-buffer buf
+      (read-only-mode -1)
+      (call-process-shell-command
+       "rem -b1 -cu3 -m -w141 -@2,0 $(date -d '-4 weeks' +%Y-%m-%d ) 2>/dev/null"
+       ;; -4 weeks = 1 month into the past, -cu3 = 3 months into the future
+       nil buf t)
+      (ansi-color-apply-on-region (point-min) (point-max))
+      (goto-char (point-min))
+      (view-mode 1))
+    (pop-to-buffer buf))
+  (delete-other-windows)
+  (search-forward "******") ;; find today
+  (beginning-of-line)
+  (recenter-top-bottom 1)) ;; this week at the top of the screen
+
+(use-package ansi-color
+  :ensure nil
+  :commands (remind-calendar))
+
 ;;;###autoload
 (define-derived-mode remind-calendar-mode fundamental-mode "rem"
   "Major mode for editing remind calendar files (.rem)."
