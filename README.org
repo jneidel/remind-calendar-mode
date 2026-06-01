@@ -18,7 +18,10 @@ To syntax highlight your ~.rem~ files:
   :quelpa (remind-calendar-mode :fetcher github :repo "jneidel/remind-calendar-mode"))
 #+end_src
 
-To view the calendar: =M-x remind-calendar=.
+To view the calendar: =M-x remind-calendar= or ~C-c o~ inside of the major mode.
+
+~C-c .~ to interactively pick a date, date time or date time range.
+All are inserted in the appropriate format.
 
 ** References
 - Alternative mode for remind files: [[https://github.com/sshelagh/remind-conf-mode][sshelagh/remind-conf-mode]]

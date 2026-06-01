@@ -115,6 +115,31 @@
        (0 'font-lock-comment-face t t))
       )))
 
+;; Utility functions
+(defun remind-calendar-read-date ()
+  "Prompt for a date and insert it at point in the
+format '%b %d %Y' (e.g. 'Aug 15 2026').
+
+Handles times as well.
+Given the input '10:00-19:00' this will be appended after the date:
+'AT 10:00 DURATION 540'."
+  (interactive)
+  (setq org-end-time-was-given nil)
+  (let* ((str (org-read-date nil nil))
+         (start-date (org-read-date nil t str))
+         (start-time (format-time-string "%H:%M" start-date))
+         (end-time org-end-time-was-given)
+         (now-time (format-time-string "%H:%M")))
+    (if (equal start-time now-time)
+        (insert (format-time-string "%b %d %Y " start-date))
+      (if (equal end-time nil)
+          (insert (format-time-string "%b %d %Y AT %H:%M " start-date))
+        (let ((end-date (org-read-date nil t (format "%s %s" (format-time-string "%F" start-date) end-time))))
+          (insert (format "%s AT %s DURATION %s "
+                          (format-time-string "%b %d %Y" start-date)
+                          start-time
+                          (let ((minutes-from-start-to-end (/ (time-subtract end-date start-date) 60)))
+                            (format "%02d:%02d" (/ minutes-from-start-to-end 60) (% minutes-from-start-to-end 60))))))))))
 
 ;;;###autoload
 (defun remind-calendar()
@@ -143,6 +168,13 @@ Can be inconsistent. You might need to call it multiple times."
 (use-package ansi-color
   :ensure nil
   :commands (remind-calendar))
+
+
+(defvar remind-calendar-mode-map (make-sparse-keymap)
+  "Local keymap for `remind-calendar-mode' buffers.")
+(let ((map remind-calendar-mode-map))
+  (define-key map (kbd "C-c .") #'remind-calendar-read-date)
+  (define-key map (kbd "C-c o") #'remind-calendar))
 
 ;;;###autoload
 (define-derived-mode remind-calendar-mode fundamental-mode "rem"
