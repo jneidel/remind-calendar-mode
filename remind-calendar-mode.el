@@ -141,6 +141,14 @@ Given the input '10:00-19:00' this will be appended after the date:
                           (let ((minutes-from-start-to-end (/ (time-subtract end-date start-date) 60)))
                             (format "%02d:%02d" (/ minutes-from-start-to-end 60) (% minutes-from-start-to-end 60))))))))))
 
+(defvar remind-calendar-command "rem -b1 -cu3 -m -w141 -@2,0 $(date -d '-4 weeks' +%Y-%m-%d) 2>/dev/null"
+  "Command used by `remind-calendar' to generate the calendar.
+
+By default the calendar looks one month into the past ('-4 weeks')
+and three months into the future ('-cu3'.)
+
+Look up the `rem(1)' man page documentation about the flags.")
+
 ;;;###autoload
 (defun remind-calendar()
   "Display terminal version of the remind calendar in color.
@@ -152,18 +160,15 @@ Can be inconsistent. You might need to call it multiple times."
   (let ((buf (get-buffer-create "*remind-calendar*")))
     (with-current-buffer buf
       (read-only-mode -1)
-      (call-process-shell-command
-       "rem -b1 -cu3 -m -w141 -@2,0 $(date -d '-4 weeks' +%Y-%m-%d ) 2>/dev/null"
-       ;; -4 weeks = 1 month into the past, -cu3 = 3 months into the future
-       nil buf t)
+      (call-process-shell-command remind-calendar-command nil buf t)
       (ansi-color-apply-on-region (point-min) (point-max))
       (goto-char (point-min))
       (view-mode 1))
     (pop-to-buffer buf))
   (delete-other-windows)
   (search-forward "******") ;; find today
-  (beginning-of-line)
-  (recenter-top-bottom 1)) ;; this week at the top of the screen
+  (backward-word)           ;; cursor on today's date
+  (recenter-top-bottom 1))  ;; this week at the top of the screen
 
 (use-package ansi-color
   :ensure nil
