@@ -14,8 +14,9 @@ Render the calendar (as a non-interactive colored pure-text buffer):
 To syntax highlight your ~.rem~ files:
 #+begin_src elisp :lexical no
 (use-package remind-calendar-mode
-  :mode ("\\.rem\\'" . remind-calendar-mode)
-  :quelpa (remind-calendar-mode :fetcher github :repo "jneidel/remind-calendar-mode"))
+  :straight (remind-calendar-mode :type git :repo "jneidel/remind-calendar-mode")
+  ;; :quelpa (remind-calendar-mode :fetcher github :repo "jneidel/remind-calendar-mode")
+  :mode ("\\.rem\\'" . remind-calendar-mode))
 #+end_src
 
 To view the calendar: =M-x remind-calendar= or ~C-c o~ inside of the major mode.
